@@ -9,13 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@wix/ecom_cart": "^1.0.96",
+    "@wix/ecom_current-cart": "^1.0.96",
+    "@wix/ecom_tip-settings": "^1.0.0",
     "@wix/sdk": "^1.14.3",
+    "@wix/stores": "^1.0.283",
+    "isomorphic-dompurify": "^2.16.0",
     "next": "14.2.2",
     "react": "^18",
     "react-dom": "^18",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
