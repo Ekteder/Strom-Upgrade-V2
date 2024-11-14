@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import UpdateButton from "@/components/UpdateButton";
 import { updateUser } from "@/lib/actions";
 import { wixClientServer } from "@/lib/wixClientServer";
@@ -6,11 +8,18 @@ import Link from "next/link";
 import { format } from "timeago.js";
 
 const ProfilePage = async () => {
+  const router = useRouter();
   const wixClient = await wixClientServer();
 
   const user = await wixClient.members.getCurrentMember({
     fieldsets: [members.Set.FULL],
   });
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+    }
+  }, [user, router]);
 
   if (!user.member?.contactId) {
     return <div className="">Not logged in!</div>;
@@ -21,6 +30,14 @@ const ProfilePage = async () => {
       filter: { "buyerInfo.contactId": { $eq: user.member?.contactId } },
     },
   });
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  if (!orderRes) {
+    return <div>Error loading orders. Please try again later.</div>;
+  }
 
   return (
     <div className="flex flex-col md:flex-row gap-24 md:h-[calc(100vh-180px)] items-center px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64">
