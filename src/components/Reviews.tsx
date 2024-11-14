@@ -6,6 +6,10 @@ const Reviews = async ({ productId }: { productId: string }) => {
   );
   const reviews = await reviewRes.json();
 
+  if (!reviews.data || !Array.isArray(reviews.data)) {
+    return <div>No reviews available.</div>;
+  }
+
   return reviews.data.map((review: any) => (
     <div className="flex flex-col gap-4" key={review.id}>
       {/* USER */}

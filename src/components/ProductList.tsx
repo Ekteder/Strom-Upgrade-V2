@@ -18,6 +18,20 @@ const ProductList = async ({
 }) => {
   const wixClient = await wixClientServer();
 
+  if (!categoryId) {
+    console.error("Category ID is required.");
+    return null; // or handle the error appropriately
+  }
+
+  if (!searchParams) {
+    console.error("Search parameters are required.");
+    return null; // or handle the error appropriately
+  }
+
+  // Log the parameters for debugging
+  console.log("Category ID:", categoryId);
+  console.log("Search Parameters:", searchParams);
+
   const productQuery = wixClient.products
     .queryProducts()
     .startsWith("name", searchParams?.name || "")

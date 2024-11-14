@@ -9,16 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@wix/ecom_cart": "^1.0.96",
-    "@wix/ecom_current-cart": "^1.0.96",
-    "@wix/ecom_tip-settings": "^1.0.0",
-    "@wix/sdk": "^1.14.3",
-    "@wix/stores": "^1.0.283",
-    "isomorphic-dompurify": "^2.16.0",
+    "@wix/ecom": "^1.0.540",
+    "@wix/members": "^1.0.116",
+    "@wix/redirects": "^1.0.44",
+    "@wix/sdk": "^1.9.1",
+    "@wix/stores": "^1.0.141",
+    "isomorphic-dompurify": "^2.9.0",
+    "js-cookie": "^3.0.5",
     "next": "14.2.2",
     "react": "^18",
+    "react-confetti": "^6.1.0",
     "react-dom": "^18",
-    "zustand": "^5.0.1"
+    "timeago.js": "^4.0.2",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
