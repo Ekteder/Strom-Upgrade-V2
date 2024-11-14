@@ -1,89 +1,142 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import UpdateButton from "@/components/UpdateButton";
-import { updateUser } from "@/lib/actions";
-import { wixClientServer } from "@/lib/wixClientServer";
-import { members } from "@wix/members";
-import Link from "next/link";
-import { format } from "timeago.js";
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import UpdateButton from "@/components/UpdateButton"
+import Link from "next/link"
+import { format } from "timeago.js"
+import { wixClientServer } from "@/lib/wixClientServer"
 
-const ProfilePage = async () => {
-  const router = useRouter();
-  const wixClient = await wixClientServer();
-
-  const user = await wixClient.members.getCurrentMember({
-    fieldsets: [members.Set.FULL],
-  });
-
-  useEffect(() => {
-    if (!user) {
-      router.push("/login");
+// Define a type for the user
+type UserType = {
+  member: {
+    contactId: string
+    profile?: {
+      nickname?: string
     }
-  }, [user, router]);
-
-  if (!user.member?.contactId) {
-    return <div className="">Not logged in!</div>;
+    contact?: {
+      firstName?: string
+      lastName?: string
+      phones?: string[]
+    }
+    loginEmail?: string
   }
+}
 
-  const orderRes = await wixClient.orders.searchOrders({
-    search: {
-      filter: { "buyerInfo.contactId": { $eq: user.member?.contactId } },
-    },
-  });
-
-  if (!user) {
-    return <div>Loading...</div>;
+// Define a type for the order
+type OrderType = {
+  _id: string
+  priceSummary: {
+    subtotal: {
+      amount: number
+    }
   }
+  _createdDate?: string
+  status: string
+}
 
-  if (!orderRes) {
-    return <div>Error loading orders. Please try again later.</div>;
-  }
+export default function ProfilePage() {
+  const router = useRouter()
+  const [user, setUser] = useState<UserType | null>(null)
+  const [orders, setOrders] = useState<OrderType[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const wixClient = await wixClientServer()
+  //       const currentUser = await wixClient.members.getCurrentMember({
+  //         fieldsets: [new Set(["FULL"])],
+  //       })
+
+  //       if (!currentUser.member) {
+  //         router.push("/login")
+  //       } else {
+  //         setUser(currentUser as UserType)
+
+  //         const orderRes = await wixClient.orders.searchOrders({
+  //           search: {
+  //             filter: {
+  //               "buyerInfo.contactId": { $eq: currentUser.member.contactId },
+  //             },
+  //           },
+  //         })
+  //         setOrders(
+  //           orderRes.orders.map((order) => ({
+  //             _id: order._id || "",
+  //             priceSummary: {
+  //               subtotal: {
+  //                 amount: Number(order.priceSummary?.subtotal?.amount) || 0,
+  //               },
+  //             },
+  //             _createdDate: order._createdDate
+  //               ? new Date(order._createdDate).toISOString()
+  //               : "",
+  //             status: order.status || "",
+  //           }))
+  //         )
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user data:", error)
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+
+  //   fetchData()
+  // }, [router])
+
+  if (loading) return <div>Loading...</div>
+
+  if (!user) return <div className="">Not logged in!</div>
 
   return (
     <div className="flex flex-col md:flex-row gap-24 md:h-[calc(100vh-180px)] items-center px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64">
       <div className="w-full md:w-1/2">
         <h1 className="text-2xl">Profile</h1>
-        <form action={updateUser} className="mt-12 flex flex-col gap-4">
+        <form action="/updateUser" className="mt-12 flex flex-col gap-4">
           <input type="text" hidden name="id" value={user.member.contactId} />
-          <label className="text-sm text-gray-700">Username</label>
+          <label className="text-sm text-gray-700" htmlFor="username">Username</label>
           <input
             type="text"
+            id="username"
             name="username"
-            placeholder={user.member?.profile?.nickname || "john"}
+            placeholder={user.member.profile?.nickname || "john"}
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
-          <label className="text-sm text-gray-700">First Name</label>
+          <label className="text-sm text-gray-700" htmlFor="firstName">First Name</label>
           <input
             type="text"
+            id="firstName"
             name="firstName"
-            placeholder={user.member?.contact?.firstName || "John"}
+            placeholder={user.member.contact?.firstName || "John"}
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
-          <label className="text-sm text-gray-700">Surname</label>
+          <label className="text-sm text-gray-700" htmlFor="lastName">Surname</label>
           <input
             type="text"
+            id="lastName"
             name="lastName"
-            placeholder={user.member?.contact?.lastName || "Doe"}
+            placeholder={user.member.contact?.lastName || "Doe"}
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
-          <label className="text-sm text-gray-700">Phone</label>
+          <label className="text-sm text-gray-700" htmlFor="phone">Phone</label>
           <input
             type="text"
+            id="phone"
             name="phone"
             placeholder={
-              (user.member?.contact?.phones &&
-                user.member?.contact?.phones[0]) ||
+              (user.member.contact?.phones && user.member.contact.phones[0]) ||
               "+1234567"
             }
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
-          <label className="text-sm text-gray-700">E-mail</label>
+          <label className="text-sm text-gray-700" htmlFor="email">E-mail</label>
           <input
             type="email"
+            id="email"
             name="email"
-            placeholder={user.member?.loginEmail || "john@gmail.com"}
+            placeholder={user.member.loginEmail || "john@gmail.com"}
             className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           />
           <UpdateButton />
@@ -92,15 +145,15 @@ const ProfilePage = async () => {
       <div className="w-full md:w-1/2">
         <h1 className="text-2xl">Orders</h1>
         <div className="mt-12 flex flex-col">
-          {orderRes.orders.map((order) => (
+          {orders.map((order) => (
             <Link
               href={`/orders/${order._id}`}
               key={order._id}
               className="flex justify-between px-2 py-6 rounded-md hover:bg-green-50 even:bg-slate-100"
             >
-              <span className="w-1/4">{order._id?.substring(0, 10)}...</span>
+              <span className="w-1/4">{order._id.substring(0, 10)}...</span>
               <span className="w-1/4">
-                ${order.priceSummary?.subtotal?.amount}
+                ${order.priceSummary.subtotal.amount}
               </span>
               {order._createdDate && (
                 <span className="w-1/4">{format(order._createdDate)}</span>
@@ -111,7 +164,5 @@ const ProfilePage = async () => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default ProfilePage;
+  )
+}
