@@ -37,7 +37,8 @@ const NavIcons = () => {
 
   const login = async () => {
     const loginRequestData = wixClient.auth.generateOAuthData(
-      "http://localhost:3000"
+      "http://localhost:3000",
+      "http://storm-upgrade.vercel.app"
     );
 
     console.log(loginRequestData);
