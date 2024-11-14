@@ -43,7 +43,7 @@ const HomePage = async () => {
         <h1 className="text-3xl ">Featured Products</h1>
         <Suspense fallback={<Skeleton />}>
           <ProductList
-            categoryId={process.env.FEATURED_PRODUCTS_CATEGORY_ID!}
+            categoryId={process.env.NEXT_PUBLIC_FEATURED_PRODUCTS_CATEGORY_ID!}
             limit={4}
             searchParams={{}}
           />
@@ -61,7 +61,7 @@ const HomePage = async () => {
         <h1 className="text-3xl">New Products</h1>
         <Suspense fallback={<Skeleton />}>
           <ProductList
-            categoryId={process.env.FEATURED_NEW_PRODUCTS_CATEGORY_ID!}
+            categoryId={process.env.NEXT_PUBLIC_FEATURED_NEW_PRODUCTS_CATEGORY_ID!}
             limit={4}
             searchParams={{}}
           />

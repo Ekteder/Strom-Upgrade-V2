@@ -78,7 +78,7 @@ const CartModal = () => {
                             {item.quantity} x{" "}
                           </div>
                         )}
-                        ${item.price?.amount}
+                        ৳{item.price?.amount}
                       </div>
                     </div>
                     {/* DESC */}
@@ -109,7 +109,7 @@ const CartModal = () => {
           <div className="">
             <div className="flex items-center justify-between font-semibold">
               <span className="">Subtotal</span>
-              <span className="">${(cart as any).subtotal?.amount || 0}</span>
+              <span className="">৳{(cart as any).subtotal?.amount || 0}</span>
             </div>
             <p className="text-gray-500 text-sm mt-2 mb-4">
               Shipping and taxes calculated at checkout.
